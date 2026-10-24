@@ -10,15 +10,12 @@ async def created_user(username, full_name, telegram_id):
         await conn.execute("""
             INSERT INTO users (username, full_name, telegram_id)
             VALUES ($1, $2, $3)
-            ON CONFLICT (telegram_id) DO NOTHING
         """, username, full_name, int(telegram_id))
         return True
     except Exception as error:
         print(f"Create user error: {error}")
-        return False
     finally:
-        if conn is not None:
-            await conn.close()
+        await conn.close()
 
 
 async def get_user(telegram_id):
@@ -32,8 +29,7 @@ async def get_user(telegram_id):
         print(f"Get user error: {error}")
         return None
     finally:
-        if conn is not None:
-            await conn.close()
+        await conn.close()
 
 
 async def create_ticket(telegram_id, subject):
@@ -47,10 +43,8 @@ async def create_ticket(telegram_id, subject):
         return True
     except Exception as error:
         print(f"Create ticket error: {error}")
-        return False
     finally:
-        if conn is not None:
-            await conn.close()
+        await conn.close()
 
 
 async def get_ticket(ticket_id):
@@ -64,8 +58,7 @@ async def get_ticket(ticket_id):
         print(f"Get ticket error: {error}")
         return None
     finally:
-        if conn is not None:
-            await conn.close()
+        await conn.close()
 
 
 async def get_user_tickets(telegram_id):
@@ -81,8 +74,7 @@ async def get_user_tickets(telegram_id):
         print(f"Get tickets error: {error}")
         return []
     finally:
-        if conn is not None:
-            await conn.close()
+        await conn.close()
 
 
 async def add_reply(ticket_id, author, message):
@@ -101,10 +93,8 @@ async def add_reply(ticket_id, author, message):
 
     except Exception as error:
         print(f"Add reply error: {error}")
-        return False
     finally:
-        if conn is not None:
-            await conn.close()
+        await conn.close()
 
 
 async def ticket_history(ticket_id):
@@ -120,8 +110,7 @@ async def ticket_history(ticket_id):
         print(f"Ticket history error: {error}")
         return []
     finally:
-        if conn is not None:
-            await conn.close()
+        await conn.close()
 
 
 async def close_ticket(ticket_id):
@@ -135,10 +124,8 @@ async def close_ticket(ticket_id):
         return result == "UPDATE 1"
     except Exception as error:
         print(f"Close ticket error: {error}")
-        return False
     finally:
-        if conn is not None:
-            await conn.close()
+        await conn.close()
 
 
 async def create_table():
