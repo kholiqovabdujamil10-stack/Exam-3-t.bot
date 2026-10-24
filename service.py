@@ -2,9 +2,7 @@ from connection import *
 import connection
 
 
-
 async def created_user(username, full_name, telegram_id):
-    conn = None
     try:
         conn = await connection_db()
         await conn.execute("""
@@ -19,7 +17,6 @@ async def created_user(username, full_name, telegram_id):
 
 
 async def get_user(telegram_id):
-    conn = None
     try:
         conn = await connection_db()
         return await conn.fetchrow("""
@@ -27,13 +24,11 @@ async def get_user(telegram_id):
         """, int(telegram_id))
     except Exception as error:
         print(f"Get user error: {error}")
-        return None
     finally:
         await conn.close()
 
 
 async def create_ticket(telegram_id, subject):
-    conn = None
     try:
         conn = await connection_db()
         await conn.execute("""
@@ -48,7 +43,6 @@ async def create_ticket(telegram_id, subject):
 
 
 async def get_ticket(ticket_id):
-    conn = None
     try:
         conn = await connection_db()
         return await conn.fetchrow("""
@@ -56,13 +50,11 @@ async def get_ticket(ticket_id):
         """, int(ticket_id))
     except Exception as error:
         print(f"Get ticket error: {error}")
-        return None
     finally:
         await conn.close()
 
 
 async def get_user_tickets(telegram_id):
-    conn = None
     try:
         conn = await connection_db()
         return await conn.fetch("""
@@ -72,13 +64,11 @@ async def get_user_tickets(telegram_id):
         """, int(telegram_id))
     except Exception as error:
         print(f"Get tickets error: {error}")
-        return []
     finally:
         await conn.close()
 
 
 async def add_reply(ticket_id, author, message):
-    conn = None
     try:
         conn = await connection_db()
 
@@ -98,7 +88,6 @@ async def add_reply(ticket_id, author, message):
 
 
 async def ticket_history(ticket_id):
-    conn = None
     try:
         conn = await connection_db()
         return await conn.fetch("""
@@ -108,13 +97,11 @@ async def ticket_history(ticket_id):
         """, int(ticket_id))
     except Exception as error:
         print(f"Ticket history error: {error}")
-        return []
     finally:
         await conn.close()
 
 
 async def close_ticket(ticket_id):
-    conn = None
     try:
         conn = await connection_db()
         result = await conn.execute("""
