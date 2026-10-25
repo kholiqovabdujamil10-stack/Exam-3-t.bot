@@ -184,7 +184,6 @@ async def close_user_ticket(message: Message, command: CommandObject):
 
 
 
-
 @dp.message(F.text == "➕ Новый тикет")
 async def new_ticket_button(message: Message):
     await message.answer("Братишка, напиши тему вот так:\n/new_ticket Не работает бот 😎")
