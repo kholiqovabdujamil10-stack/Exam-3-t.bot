@@ -26,10 +26,9 @@ async def start_bot(message: Message):
     else:
         status = await created_user(user.username, user.full_name, user.id)
         if status:
-            await message.answer(f"Добро пожаловать, {user.full_name}, братишка! 🔥", reply_markup=main_menu)
+            await message.answer(f"Добро пожаловать, {user.full_name}, 🔥", reply_markup=main_menu)
         else:
-            await message.answer("Брат, не получилось создать профиль 😭 Попробуй позже.")
-
+            await message.answer("Не получилось создать профиль 😭 Попробуй позже.")
 
 
 @dp.message(Command("help"))
@@ -37,10 +36,10 @@ async def start_bot(message: Message):
 async def help_command(message: Message):
     await message.answer(
         "🎫 SUPPORT TICKET SYSTEM 😎\n\n"
-        "Брат, здесь можно создавать тикеты и общаться с поддержкой.\n\n"
+        "Здесь можно создавать тикеты и общаться с поддержкой.\n\n"
         "📌 ДОСТУПНЫЕ КОМАНДЫ:\n\n"
         "➕ /new_ticket <subject>\n"
-        "Создать новый тикет, брат 🔥\n\n"
+        "Создать новый тикет 🔥\n\n"
         "🎫 /my_tickets\n"
         "Посмотреть свои тикеты. Проверим, сколько у тебя дел 😂\n\n"
         "💬 /reply <ticket_id> <text>\n"
@@ -54,20 +53,21 @@ async def help_command(message: Message):
         "Пример: /close_ticket 1"
     )
 
+
 @dp.message(Command("new_ticket"))
 async def new_ticket(message: Message, command: CommandObject):
     subject = (command.args or "").strip()
     if not subject:
-        await message.answer("Брат, сначала напиши тему тикета 😅\nПример: /new_ticket Не работает бот")
+        await message.answer("Сначала напиши тему тикета 😅\nПример: /new_ticket Не работает бот")
         return
     if len(subject) > 200:
-        await message.answer("Опа, брат, тема слишком длинная 😂 Максимум 200 символов.")
+        await message.answer("Опа, тема слишком длинная 😂 Максимум 200 символов.")
         return
     status = await create_ticket(message.from_user.id, subject)
     if status:
-        await message.answer("🎫 Брат, тикет создан! Теперь ждём магии 🪄🔥")
+        await message.answer("🎫 Тикет создан! Теперь ждём магии 🪄🔥")
     else:
-        await message.answer("Не получилось создать тикет, брат. База сегодня грустит 😭")
+        await message.answer("Не получилось создать тикет. База сегодня грустит 😭")
 
 
 
@@ -76,7 +76,7 @@ async def new_ticket(message: Message, command: CommandObject):
 async def my_tickets(message: Message):
     tickets = await get_user_tickets(message.from_user.id)
     if not tickets:
-        await message.answer("Брат, у тебя пока нет тикетов. Отдыхаешь? 😂")
+        await message.answer("У тебя пока нет тикетов. Отдыхаешь? 😂")
         return
     text = ""
     for ticket in tickets:
@@ -90,37 +90,37 @@ async def my_tickets(message: Message):
 
 
 
-
-
-
 @dp.message(Command("reply"))
 async def reply_ticket(message: Message, command: CommandObject):
     data = (command.args or "").split(maxsplit=1)
     if len(data) != 2 or not data[1].strip():
-        await message.answer("Брат, напиши ID тикета и сообщение 😅\nПример: /reply 1 Не работает бот")
+        await message.answer("Напиши ID тикета и сообщение 😅\nПример: /reply 1 Не работает бот")
         return
     try:
         ticket_id = int(data[0])
         if ticket_id <= 0:
             raise ValueError
     except ValueError:
-        await message.answer("Брат, ID должен быть положительным числом 😂")
+        await message.answer("ID должен быть положительным числом 😂")
         return
     ticket = await get_ticket(ticket_id)
     if not ticket:
-        await message.answer("Брат, такого тикета вообще не существует 💀")
+        await message.answer("Такого тикета вообще не существует 💀")
         return
     if ticket["user_id"] != message.from_user.id:
-        await message.answer("Это не твой тикет, Брат 😂")
+        await message.answer("Это не твой тикет 😂")
         return
     if ticket["status"] == "closed":
-        await message.answer("Брат, тикет уже закрыт. Поезд ушёл 🚂😂")
+        await message.answer("Тикет уже закрыт. Поезд ушёл 🚂😂")
         return
     status = await add_reply(ticket_id, "user", data[1].strip())
     if status:
-        await message.answer("🚀 Ответ залетел, Брат!")
+        await message.answer("🚀 Ответ залетел!")
     else:
-        await message.answer("Брат, не получилось отправить сообщение 😭")
+        await message.answer("Не получилось отправить сообщение 😭")
+
+
+
 
 @dp.message(Command("ticket_history"))
 async def show_ticket_history(message: Message, command: CommandObject):
@@ -129,14 +129,14 @@ async def show_ticket_history(message: Message, command: CommandObject):
         if ticket_id <= 0:
             raise ValueError
     except ValueError:
-        await message.answer("Брат, укажи ID тикета правильно 😅\nПример: /ticket_history 1")
+        await message.answer("Укажи ID тикета правильно 😅\nПример: /ticket_history 1")
         return
     ticket = await get_ticket(ticket_id)
     if not ticket:
-        await message.answer("Брат, такого тикета нет 💀")
+        await message.answer("Такого тикета нет 💀")
         return
     if ticket["user_id"] != message.from_user.id:
-        await message.answer("Брат, это чужая история. Не лезем 😂")
+        await message.answer("Это чужая история. Не лезем 😂")
         return
     replies = await ticket_history(ticket_id)
     text = (
@@ -145,13 +145,11 @@ async def show_ticket_history(message: Message, command: CommandObject):
         f"📌 Статус: {ticket['status']}\n"
     )
     if not replies:
-        await message.answer(text + "\nТут пока тишина, Брат 🤐")
+        await message.answer(text + "\nТут пока тишина 🤐")
         return
     for reply in replies:
         text += f"\n{reply['author']}: {reply['message']}"
     await message.answer(text)
-
-
 
 
 
@@ -163,31 +161,31 @@ async def close_user_ticket(message: Message, command: CommandObject):
         if ticket_id <= 0:
             raise ValueError
     except ValueError:
-        await message.answer("Брат, укажи правильный ID тикета 😅")
+        await message.answer("Укажи правильный ID тикета 😅")
         return
     ticket = await get_ticket(ticket_id)
     if not ticket:
-        await message.answer("Брат, такого тикета не существует 💀")
+        await message.answer("Такого тикета не существует 💀")
         return
     if ticket["user_id"] != message.from_user.id:
-        await message.answer("Это не твой тикет Брат 😂")
+        await message.answer("Это не твой тикет 😂")
         return
     if ticket["status"] == "closed":
-        await message.answer("Брат, он уже закрыт. Хватит его мучить 😂")
+        await message.answer("Он уже закрыт. Хватит его мучить 😂")
         return
     status = await close_ticket(ticket_id)
     if status:
-        await message.answer("🔒 Всё, Брат, тикет закрыт! Дело сделано 😎")
+        await message.answer("🔒 Всё, тикет закрыт! Дело сделано 😎")
     else:
-        await message.answer("Не получилось закрыть тикет, брат 😭")
-
+        await message.answer("Не получилось закрыть тикет 😭")
 
 
 
 
 @dp.message(F.text == "➕ Новый тикет")
 async def new_ticket_button(message: Message):
-    await message.answer("Брат, напиши тему вот так:\n/new_ticket Не работает бот 😎")
+    await message.answer("Напиши тему вот так:\n/new_ticket Не работает бот 😎")
+
 
 
 async def main():
